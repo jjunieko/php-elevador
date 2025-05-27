@@ -1,61 +1,133 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Projeto Elevador em Laravel
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este projeto simula a lógica de um elevador usando estrutura de fila (FIFO), implementado com PHP (Laravel).
 
-## About Laravel
+## 📦 Requisitos
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Laravel 10+
+- PHP 8.1+
+- SQLite (ou compatível)
+- Blade (para interface)
+- Artisan (CLI)
+- Banco de dados para log de chamadas
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Instalação
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Clone o repositório e instale as dependências:
 
-## Learning Laravel
+```bash
+git clone <seu-repo-git>
+cd elevador-projeto
+composer install
+cp .env.example .env
+touch database/database.sqlite
+php artisan key:generate
+```
+- Configure o banco
+Utilize SQLite ou ajuste para MySQL/PostgreSQL:
+```bash
+touch database/database.sqlite
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Rode as migrations
+```bash
+php artisan migrate
+```
+- Rode o Projeto
+```bash
+php artisan serve
+```
+### Testar Fila Qeue
+```bash
+php artisan elevador:testar
+```
+### Teste unitario
+```bash
+php artisan test
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## INFOS
+Funcionalidades implementadas
+📌 Classe Elevador (app/Services/Elevador.php)
+Atributos:
+filaChamados (SplQueue)
+andarAtual (int)
+capacidade (int)
 
-## Laravel Sponsors
+Métodos:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+__construct(int $capacidade) – inicializa fila, capacidade e andar inicial
 
-### Premium Partners
+chamar(int $andar) – adiciona o andar à fila
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+mover() – remove o próximo andar da fila e atualiza andarAtual
 
-## Contributing
+getAndarAtual(): int – retorna o andar atual
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+getChamadosPendentes(): SplQueue – retorna cópia da fila de andares pendentes
 
-## Code of Conduct
+📌 Interface Web (Blade)
+Local: resources/views/elevador/index.blade.php
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Funcionalidades:
 
-## Security Vulnerabilities
+Campo para inserir andar e chamar o elevador
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Botão para mover o elevador
 
-## License
+Lista dos andares pendentes
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Exibição do andar atual
+
+📌 Controller
+Local: app/Http/Controllers/ElevadorController.php
+
+Métodos:
+
+index() – mostra a interface com estado atual
+
+chamar(Request $request) – chama o elevador e registra log
+
+mover() – move o elevador e registra log
+
+Utiliza Session para manter o estado da fila entre requisições.
+
+📌 Log de Movimentos
+Tabela: movimentos_elevador
+
+Criada com migration:
+
+bash
+Copiar
+Editar
+php artisan make:migration create_movimentos_elevador_table
+
+Model: app/Models/MovimentoElevador.php
+
+Ações registradas:
+
+acao: 'chamar' ou 'mover'
+
+andar: valor do andar chamado ou alcançado
+
+🧪 Testes com Artisan
+Um comando CLI está disponível para teste via terminal:
+
+bash
+Copiar
+Editar
+
+php artisan elevador:testar
+
+Esse comando:
+Cria uma instância do elevador
+Chama andares (3, 5, 1)
+Move o elevador três vezes
+Exibe estado atual e fila
+
+🔒 Observações
+Não há verificação de máximo de capacidade (por simplicidade).
+Interface básica, mas funcional. Pode ser estendida para Vue/React se desejado.
+Banco pode ser ajustado para outros SGBDs facilmente.
+
