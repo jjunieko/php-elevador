@@ -17,18 +17,14 @@ Clone o repositório e instale as dependências:
 
 ```bash
 git clone <seu-repo-git>
-cd elevador-projeto
+cd php-elevador
+
 composer install
+
 cp .env.example .env
 touch database/database.sqlite
-php artisan key:generate
+php artisan key:generate 
 ```
-- Configure o banco
-Utilize SQLite ou ajuste para MySQL/PostgreSQL:
-```bash
-touch database/database.sqlite
-```
-
 - Rode as migrations
 ```bash
 php artisan migrate
