@@ -42,6 +42,21 @@ php artisan elevador:testar
 php artisan test
 ```
 
+## DOCKER
+ - se for rodar pelo docker 
+```bash
+docker-compose build
+docker-compose up
+
+# add no terminal do docker para nao dar erro 
+docker exec -it php-elevador bash
+composer install
+php artisan key:generate
+php artisan migrate
+
+-http://localhost:8080
+
+```
 
 ## INFOS
 Funcionalidades implementadas
