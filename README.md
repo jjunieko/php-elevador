@@ -48,7 +48,7 @@ php artisan test
 docker-compose build
 docker-compose up
 
-# add no terminal do docker para nao dar erro 
+# add no terminal do docker para nao dar erro -
 docker exec -it php-elevador bash
 composer install
 php artisan key:generate

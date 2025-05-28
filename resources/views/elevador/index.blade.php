@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Simulador de Elevador</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
+
 <body>
     <h1>Elevador</h1>
     <p>Andar atual: <strong>{{ $andarAtual }}</strong></p>
@@ -20,13 +22,14 @@
         <button type="submit">Mover elevador</button>
     </form>
 
-    <h3>Fila de chamados:</h3>
-    <ul>
-        @forelse($fila as $andar)
-            <li>Andar {{ $andar }}</li>
+    <h3>Fila de chamados (ordem de chegada):</h3>
+    <ol>
+        @forelse($fila as $index => $andar)
+            <li>Posição {{ $index + 1 }} → Andar {{ $andar }}</li>
         @empty
             <li>Sem chamados pendentes</li>
         @endforelse
-    </ul>
+    </ol>
 </body>
+
 </html>
